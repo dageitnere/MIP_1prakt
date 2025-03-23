@@ -1,3 +1,4 @@
+from RunSettings import RunSettings
 # Izveido koka datu strukturu
 class GameTreeNode:
     def __init__(self, currentNumber: int, playerScore: int, computerScore: int, bankScore: int, turn: int):
@@ -24,7 +25,7 @@ class GameTree:
 
 # Izveido spēles koku
 
-def generateGameTree(startingNumber: int, maxDepth: int):
+def generateGameTree(inputValues : RunSettings, maxDepth: int):
     
     # Skaita rezultātu atkarībā no dalījuma
     def calculateScore(number, currentTurn, currentPlayerScore, currentComputerScore, currentBankScore):
@@ -144,8 +145,8 @@ def generateGameTree(startingNumber: int, maxDepth: int):
     gameTree = GameTree()
 
     # Izveido spēles koka sakni
-    decidedTurn = 0 # Spēlētāja izvēle kurš sāks spēli
-    root = buildTree(startingNumber, maxDepth, 1 - decidedTurn, 0, 0, 0, gameTree)
+    decidedTurn = inputValues.firstMovePreference # Spēlētāja izvēle kurš sāks spēli
+    root = buildTree(inputValues.startingValue, maxDepth, 1 - decidedTurn, 0, 0, 0, gameTree)
     
     return gameTree, root
 
@@ -169,7 +170,7 @@ def printGameTree(node, depth=0):
 
 # Pārbaude kokam
 if __name__ == "__main__":
-    startNumber = 5832  # Sākuma skaitlis
+    startNumber = RunSettings(0, "AlfaBeta", 5832)  # Sākuma skaitlis
     gameTree, root = generateGameTree(startNumber, 10)
     
     print("Game Tree Nodes:")

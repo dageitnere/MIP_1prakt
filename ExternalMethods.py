@@ -1,22 +1,5 @@
 import random
 
-def SafeIntegerInput():
-    """
-    Checks if input value is 0 or 1, returns input value if it is 0 or 1, otherwise returns None.
-    """
-
-    value = input()
-
-    if isinstance(value, int): 
-        if value is 0 or 1:
-            return value
-        else:
-            print("Nepareiza ievade.")
-            return None
-    else:
-        print("Nepareiza ievade.")
-        return None
-    
 def GenerateStartingNumberList():
     """
     Generates a list containing 5 random integers, which are between 10000 and 20000.
@@ -29,3 +12,6 @@ def GenerateStartingNumberList():
             startingNumberList.append(randomNum)
 
     return startingNumberList
+
+def GetIndexFromList(value : str, valueList : list):
+    return 1 + valueList.index(value)
