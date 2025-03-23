@@ -1,15 +1,27 @@
 from CustomModels.RunSettings import RunSettings
 from CustomModels.GameState import GameState
 from ExternalMethods import GetIndexFromList
+from HeuristicFunction import evalNode
 # Izveido koka datu strukturu
 class GameTreeNode:
     def __init__(self, currentNumber: int, playerScore: int, computerScore: int, bankScore: int, turn: int):
         self.currentNumber = currentNumber
+
         self.playerScore = playerScore
         self.computerScore = computerScore
         self.bankScore = bankScore
+        
         self.turn = turn
         self.children = []
+
+        self.heuristicValue = 0
+
+    def getChildren(self):
+        return self.children
+    
+    def setHeuristicValue(self, heuristicValue):
+        self.heuristicValue = heuristicValue
+        return
 
 class GameTree:
     def __init__(self):
@@ -170,6 +182,7 @@ def printGameTree(node, depth=0):
     print(f"{indent}Player Score: {node.playerScore}")
     print(f"{indent}Computer Score: {node.computerScore}")
     print(f"{indent}Bank Score: {node.bankScore}")
+    print(f"{indent}Heuristic Score: {node.heuristicValue}")
     print(f"{indent}Turn: {'Player' if node.turn == 0 else 'Computer'}")
     print(f"{indent}Children: {len(node.children)}")
     print("")
@@ -179,9 +192,11 @@ def printGameTree(node, depth=0):
 
 # Pārbaude kokam
 if __name__ == "__main__":
-    startNumber = RunSettings(0, "AlfaBeta", 5832)  # Sākuma skaitlis
+    startNumber = RunSettings(0, "AlfaBeta", 12696)  # Sākuma skaitlis
     gameTree, root = generateGameTree(startNumber, 10)
     
+    evalNode(root, startNumber.firstMovePreference)
+
     print("Game Tree Nodes:")
     for node in gameTree.childrenList:
         print(f"Node: {node.currentNumber}")

@@ -1,4 +1,3 @@
-
 def evalNode(node, decidedTurn):
     if not node.getChildren():  # Ja tā ir strupceļa virsotne, aprēķina tās vērtību
         calcHeuristicVal(node, decidedTurn)
