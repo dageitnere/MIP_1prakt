@@ -1,9 +1,10 @@
 from tkinter import *
 from tkinter import ttk
 import ExternalMethods
-import RunSettings
+import CustomModels.RunSettings as RunSettings
+import CustomModels.GameState as GameState
 import GameTree
-import MainGameUI
+from UserInterface.MainGameUI import CreateMainGameUI
 
 firstMovePreferenceChoices = ["Cilvēks", "Dators"]
 algorithmPreferenceChoices = ["MinMax", "AlfaBeta"]
@@ -47,9 +48,19 @@ def CreateUI():
         )
 
         GameTree.generateGameTree(runSettings, 10)
+        
+        gameState = GameState.GameState(
+            turnToPlay = firstMovePreference_entry.get(),
+            currentValue = int(startingValue_entry.get()),
+            playerPoints = 0,
+            computerPoints = 0,
+            bankValue = 0
+        )
+
         for widget in window.winfo_children():
             widget.destroy()
-        MainGameUI.CreateMainGameUI(window)
+
+        CreateMainGameUI(window, gameState)
         
     # Izvēles apstiprināšanas un spēles uzsākšanas poga
     ok_button = Button(window, text = "Apstiprināt", command = StartGame)
