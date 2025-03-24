@@ -195,7 +195,7 @@ if __name__ == "__main__":
     startNumber = RunSettings(0, "AlfaBeta", 12696)  # Sākuma skaitlis
     gameTree, root = generateGameTree(startNumber, 10)
     
-    evalNode(root, startNumber.firstMovePreference)
+    evalNode(root)
 
     print("Game Tree Nodes:")
     for node in gameTree.childrenList:

@@ -14,4 +14,4 @@ def GenerateStartingNumberList():
     return startingNumberList
 
 def GetIndexFromList(value : str, valueList : list):
-    return 1 + valueList.index(value)
+    return valueList.index(value)

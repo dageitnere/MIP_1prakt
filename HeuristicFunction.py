@@ -1,26 +1,20 @@
-def evalNode(node, decidedTurn):
+def evalNode(node):
     if not node.getChildren():  # Ja tā ir strupceļa virsotne, aprēķina tās vērtību
-        calcHeuristicVal(node, decidedTurn)
+        calcHeuristicVal(node)
     else:
         for child in node.getChildren():
-            evalNode(child, decidedTurn)
+            evalNode(child)
 
     # Izsauc funkciju, lai dotos augšup tiklīdz aizpildītas strupceļa virsotnes
     fillTree(node)
 
 
 # Pieņem, ka spēlētājs ir minimizētājs un dators ir maksimizētājs
-def calcHeuristicVal(node, decidedTurn):
-    if node.playerScore < node.computerScore:
-        if decidedTurn == 0:
-            node.setHeuristicValue(1)
-        else:
-            node.setHeuristicValue(-1)
-    elif node.playerScore > node.computerScore:
-        if decidedTurn == 0:
-            node.setHeuristicValue(-1)
-        else:
-            node.setHeuristicValue(1)
+def calcHeuristicVal(node):
+    if node.playerScore > node.computerScore:
+        node.setHeuristicValue(-1)
+    elif node.playerScore < node.computerScore:
+        node.setHeuristicValue(1)
     else:
         node.setHeuristicValue(0)
 
