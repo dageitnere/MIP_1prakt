@@ -102,7 +102,7 @@ def generateGameTree(inputValues : RunSettings, maxDepth: int):
             dividedNumber2 = currentNumber // 2
 
             if dividedNumber2 > 1:
-                move = firstMovePreferenceChoices[1 - turn]
+                move = firstMovePreferenceChoices[turn]
                 # Aprēķina jaunos rezultātus
                 newPlayerScore, newComputerScore, newBankScore = calculateScore(GameState(
                     move,
@@ -134,7 +134,7 @@ def generateGameTree(inputValues : RunSettings, maxDepth: int):
             dividedNumber3 = currentNumber // 3
 
             if dividedNumber3 > 1:
-                move = firstMovePreferenceChoices[1 - turn]
+                move = firstMovePreferenceChoices[turn]
                 # Aprēķina jaunos rezultātus
                 newPlayerScore, newComputerScore, newBankScore = calculateScore(GameState(
                     move,
@@ -167,7 +167,7 @@ def generateGameTree(inputValues : RunSettings, maxDepth: int):
 
     # Izveido spēles koka sakni
     decidedTurn = inputValues.firstMovePreference # Spēlētāja izvēle kurš sāks spēli
-    root = buildTree(inputValues.startingValue, maxDepth, 1 - decidedTurn, 0, 0, 0, gameTree)
+    root = buildTree(inputValues.startingValue, maxDepth, decidedTurn, 0, 0, 0, gameTree)
     
     return gameTree, root
 

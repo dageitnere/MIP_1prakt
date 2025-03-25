@@ -4,6 +4,9 @@ from GameTree import calculateScore
 
 def CreateMainGameUI(window, values : GameState):
     
+    if values.currentValue%2 != 0 and values.currentValue%3 != 0:
+        return
+
     firstPlayerPoints_label = Label(window, text = "Spēlētāja punkti")
     firstPlayerPoints_label.grid(row = 1, column = 1)
 
@@ -32,7 +35,7 @@ def CreateMainGameUI(window, values : GameState):
         ))
         from UserInterface.CreateUI import firstMovePreferenceChoices
         from ExternalMethods import GetIndexFromList
-        '''
+
         CreateMainGameUI(window, GameState(
             firstMovePreferenceChoices[1 - GetIndexFromList(values.turnToPlay, firstMovePreferenceChoices)],
             values.currentValue/move,
@@ -40,7 +43,7 @@ def CreateMainGameUI(window, values : GameState):
             newComputerScore,
             newBankScore
         ))
-        '''
+
     divideByTwo_button = Button(window, text = "2", command = ExecuteMove(2))
     divideByTwo_button.grid(row = 3, column = 2)
 
