@@ -1,7 +1,7 @@
 from CustomModels.RunSettings import RunSettings
 from CustomModels.GameState import GameState
-from ExternalMethods import GetIndexFromList
 from HeuristicFunction import minMax, alphaBeta
+
 # Izveido koka datu strukturu
 class GameTreeNode:
     def __init__(self, currentNumber: int, playerScore: int, computerScore: int, bankScore: int, turn: int):
@@ -16,12 +16,16 @@ class GameTreeNode:
 
         self.heuristicValue = None
 
+
     def getChildren(self):
         return self.children
     
+
     def setHeuristicValue(self, heuristicValue):
         self.heuristicValue = heuristicValue
         return
+
+
 
 class GameTree:
     def __init__(self):
@@ -37,145 +41,76 @@ class GameTree:
     def addPath(self, startNode, endNode):
         self.pathList[startNode] = self.pathList.get(startNode,[]) + [endNode]
 
-# Izveido spēles koku
 
-    # Skaita rezultātu atkarībā no dalījuma
+
+# Skaita rezultātu atkarībā no dalījuma
 def calculateScore(values : GameState):
-    newPlayerScore = values.playerPoints
-    newComputerScore = values.computerPoints
-    newBankScore = values.bankValue
-        
-    from UserInterface.CreateUI import firstMovePreferenceChoices
-    currentTurn = GetIndexFromList(values.turnToPlay, firstMovePreferenceChoices)
-
-    # Atkarībā no tā kura gājiens tiek aprēķināts rezultāts
+    if values.turnToPlay == "Cilvēks":
+        currentTurn = 0 
+    else:
+        currentTurn = 1
+    
+    # Atkarībā no tā kura gājiens un kāds ir iegūtais skaitlis, tiek pievienoti punkti
     if values.currentValue % 2 == 0:
         if currentTurn == 0: 
-            newPlayerScore += 1
+            values.playerPoints += 1
         else:  
-            newComputerScore += 1
+            values.computerPoints += 1
     else:
         if currentTurn == 0:
-            newPlayerScore -= 1
+            values.playerPoints -= 1
         else: 
-            newComputerScore -= 1
+            values.computerPoints -= 1
 
     if values.currentValue % 10 == 0 or values.currentValue % 5 == 0:
-        newBankScore += 1
+        values.bankValue += 1
 
-    return newPlayerScore, newComputerScore, newBankScore
+    return values.playerPoints, values.computerPoints, values.bankValue
 
+
+
+# Izveido spēles koku
 def generateGameTree(inputValues : RunSettings, maxDepth: int):
-    from UserInterface.CreateUI import firstMovePreferenceChoices
+    from UserInterface.CreateUI import firstMovePreferenceChoices # Tiek importēts šeit, jo citādi veidotos cilpa, jo CreateUI importo GameTree
+    gameTree = GameTree() # GameTree objekta izveide
+    seenStates = {} # Vārdnīca, lai uzglabātu unikālos spēles stāvokļus, lai neaizņemtu tik daudz vietas
 
     # Rekursīvi izveido spēles koku
     def buildTree(currentNumber, depth, turn, playerScore, computerScore, bankScore, gameTree):
-        state_key = (currentNumber, playerScore, computerScore, bankScore, turn)
 
         # Pārbauda vai stāvoklis nav unikāls, tādejādi izmanto jau saglabāto stāvokli
+        state_key = (currentNumber, playerScore, computerScore, bankScore, turn)
         if state_key in seenStates:
             return seenStates[state_key]
 
-        # Izveido konkrēto virsotni
-        currentNode = GameTreeNode(
-            currentNumber = currentNumber, 
-            playerScore = playerScore, 
-            computerScore = computerScore, 
-            bankScore = bankScore, 
-            turn = turn
-        )
+        node = GameTreeNode(currentNumber, playerScore, computerScore, bankScore, turn) # Izveido virsotni
+        gameTree.addNode(node) # Pievieno virsotni kokam
+        seenStates[state_key] = node
 
-        # Pievieno virsotni spēles kokam
-        gameTree.addNode(currentNode)
-        seenStates[state_key] = currentNode
-
-        # Pārbauda vai izpildās spēles gala nosacījums
-        if currentNumber in [2, 3]:
-            # Atkarībā no tā kura kārta ir, tiek piešķirta bankas rezultāts
+        if currentNumber in [2, 3]:  # Pārbauda vai nav sasniegts 2 vai 3, kad izmaksā banku
             if currentNumber == 2:
-                if turn == 0:  # Par nulli uzskata spēlētāja kārtu
-                    currentNode.playerScore += bankScore
-                else:  # Par viens uzskata datora kārtu
-                    currentNode.computerScore += bankScore
-            return currentNode
+                if turn == 0:
+                    node.playerScore += bankScore
+                else:
+                    node.computerScore += bankScore
+            return node
 
-        # Pārbauda vai sasniegts dziļums
-        if depth == 0:
-            return currentNode
+        if depth == 0:  # Pārbauda vai nav sasniegts maksimālais dziļums, kas iepriekš norādīts
+            return node
 
-        # Apskata dalījumu ar 2
-        if currentNumber % 2 == 0:
-            dividedNumber2 = currentNumber // 2
+        for divisor in (2, 3):
+            if currentNumber % divisor == 0:
+                newNumber = currentNumber // divisor
+                if newNumber > 1:
+                    move = firstMovePreferenceChoices[turn]
+                    newScores = calculateScore(GameState(move, newNumber, playerScore, computerScore, bankScore))
+                    childNode = buildTree(newNumber, depth - 1, 1 - turn, *newScores, gameTree)
+                    gameTree.addPath(node, childNode)
+                    node.children.append(childNode)
 
-            if dividedNumber2 > 1:
-                move = firstMovePreferenceChoices[turn]
-                # Aprēķina jaunos rezultātus
-                newPlayerScore, newComputerScore, newBankScore = calculateScore(GameState(
-                    move,
-                    dividedNumber2, 
-                    playerScore, 
-                    computerScore, 
-                    bankScore
-                    )
-                )
+        return node
 
-                
-            # Izmantojot rekursiju turpina būvēt koku
-            childNode2 = buildTree(
-                dividedNumber2, 
-                depth - 1, 
-                1 - turn,  # Samaina kārtu
-                newPlayerScore, 
-                newComputerScore, 
-                newBankScore,
-                gameTree
-            )
-
-            # Sarakstam pievieno ceļu starp virsotnēm
-            gameTree.addPath(currentNode, childNode2)
-            currentNode.children.append(childNode2)
-
-        #  Apskata dalījumu ar 3
-        if currentNumber % 3 == 0:
-            dividedNumber3 = currentNumber // 3
-
-            if dividedNumber3 > 1:
-                move = firstMovePreferenceChoices[turn]
-                # Aprēķina jaunos rezultātus
-                newPlayerScore, newComputerScore, newBankScore = calculateScore(GameState(
-                    move,
-                    dividedNumber3, 
-                    playerScore, 
-                    computerScore, 
-                    bankScore
-                    )
-                )
-
-            # Izmantojot rekursiju turpina būvēt koku
-            childNode3 = buildTree(
-                dividedNumber3, 
-                depth - 1, 
-                1 - turn,  # Samaina kārtu
-                newPlayerScore, 
-                newComputerScore, 
-                newBankScore,
-                gameTree
-            )
-
-            # Sarakstam pievieno ceļu starp virsotnēm
-            gameTree.addPath(currentNode, childNode3)
-            currentNode.children.append(childNode3)
-
-        return currentNode
-
-    # Izveido spēles koku
-    gameTree = GameTree()
-    seenStates = {} # Vārdnīca, lai uzglabātu unikālos spēles stāvokļus
-
-    # Izveido spēles koka sakni
-    decidedTurn = inputValues.firstMovePreference # Spēlētāja izvēle kurš sāks spēli
-    root = buildTree(inputValues.startingValue, maxDepth, decidedTurn, 0, 0, 0, gameTree)
-    
+    root = buildTree(inputValues.startingValue, maxDepth, inputValues.firstMovePreference, 0, 0, 0, gameTree) # Koka saknes izveide
     return gameTree, root
 
 # Izvada koku
@@ -202,7 +137,7 @@ if __name__ == "__main__":
     startNumber = RunSettings(1, "AlfaBeta", 12696)  # Sākuma skaitlis
     gameTree, root = generateGameTree(startNumber, 10)
     
-    alphaBeta(root)
+    minMax(root)
 
     print("Game Tree Nodes:")
     for node in gameTree.childrenList:
