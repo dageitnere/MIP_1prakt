@@ -1,7 +1,7 @@
 from CustomModels.RunSettings import RunSettings
 from CustomModels.GameState import GameState
 from ExternalMethods import GetIndexFromList
-from HeuristicFunction import evalNode
+from HeuristicFunction import minMax, alphaBeta
 # Izveido koka datu strukturu
 class GameTreeNode:
     def __init__(self, currentNumber: int, playerScore: int, computerScore: int, bankScore: int, turn: int):
@@ -14,7 +14,7 @@ class GameTreeNode:
         self.turn = turn
         self.children = []
 
-        self.heuristicValue = 0
+        self.heuristicValue = None
 
     def getChildren(self):
         return self.children
@@ -70,6 +70,11 @@ def generateGameTree(inputValues : RunSettings, maxDepth: int):
 
     # Rekursīvi izveido spēles koku
     def buildTree(currentNumber, depth, turn, playerScore, computerScore, bankScore, gameTree):
+        state_key = (currentNumber, playerScore, computerScore, bankScore, turn)
+
+        # Pārbauda vai stāvoklis nav unikāls, tādejādi izmanto jau saglabāto stāvokli
+        if state_key in seenStates:
+            return seenStates[state_key]
 
         # Izveido konkrēto virsotni
         currentNode = GameTreeNode(
@@ -82,6 +87,7 @@ def generateGameTree(inputValues : RunSettings, maxDepth: int):
 
         # Pievieno virsotni spēles kokam
         gameTree.addNode(currentNode)
+        seenStates[state_key] = currentNode
 
         # Pārbauda vai izpildās spēles gala nosacījums
         if currentNumber in [2, 3]:
@@ -164,6 +170,7 @@ def generateGameTree(inputValues : RunSettings, maxDepth: int):
 
     # Izveido spēles koku
     gameTree = GameTree()
+    seenStates = {} # Vārdnīca, lai uzglabātu unikālos spēles stāvokļus
 
     # Izveido spēles koka sakni
     decidedTurn = inputValues.firstMovePreference # Spēlētāja izvēle kurš sāks spēli
@@ -192,10 +199,10 @@ def printGameTree(node, depth=0):
 
 # Pārbaude kokam
 if __name__ == "__main__":
-    startNumber = RunSettings(0, "AlfaBeta", 12696)  # Sākuma skaitlis
+    startNumber = RunSettings(1, "AlfaBeta", 12696)  # Sākuma skaitlis
     gameTree, root = generateGameTree(startNumber, 10)
     
-    evalNode(root)
+    alphaBeta(root)
 
     print("Game Tree Nodes:")
     for node in gameTree.childrenList:
