@@ -45,9 +45,26 @@ def alphaBeta(node, alpha=float('-inf'), beta=float('inf')):
 
 
 def calcHeuristicVal(node):
+    # f1: pamat-punktu-vertējums
     if node.playerScore > node.computerScore:
-        node.setHeuristicValue(-1)
+        f1 = 2  # SLIKTI, vada speletājs
     elif node.playerScore < node.computerScore:
-        node.setHeuristicValue(1)
+        f1 = 0  # LABI, vada dators
     else:
-        node.setHeuristicValue(0)
+        f1 = 1  #neviens nevada
+
+    # f2: novertejums vai skaitlis ir pāra, dators var dabūt punktu
+    if node.currentNumber % 2 == 0:
+        f2 = 0
+    else:
+        f2 = 1
+
+    # f3: vertejums vai ir iespejams nakamais solis
+    if node.currentNumber % 2 == 0 or node.currentNumber % 3 == 0:
+        f3 = 0 
+    else:
+        f3 = 1
+
+    # heuristika kopējā vērtība (minimizēts)
+    heuristic_value = f1 + f2 + f3
+    node.setHeuristicValue(heuristic_value)
