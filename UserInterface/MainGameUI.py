@@ -6,9 +6,10 @@ from UserInterface.GameFinishUI import CreateGameFinishUI
 
 def CreateMainGameUI(window, values : GameState, wasValidMove = True):
     
+    for widget in window.winfo_children():
+        widget.destroy()
+
     if values.currentValue%2 != 0 and values.currentValue%3 != 0:
-        for widget in window.winfo_children():
-            widget.destroy()
         CreateGameFinishUI(window, values)
 
     firstPlayerPoints_label = Label(window, text = "Spēlētāja punkti")
@@ -51,10 +52,10 @@ def CreateMainGameUI(window, values : GameState, wasValidMove = True):
         else:
             CreateMainGameUI(window, values, False)
 
-    divideByTwo_button = Button(window, text = "2", command = lambda:ExecuteMove(2))
+    divideByTwo_button = Button(window, text = "   2   ", command = lambda:ExecuteMove(2))
     divideByTwo_button.grid(row = 3, column = 2)
 
-    divideByThree_button = Button(window, text = "3", command = lambda:ExecuteMove(3))
+    divideByThree_button = Button(window, text = "   3   ", command = lambda:ExecuteMove(3))
     divideByThree_button.grid(row = 4, column = 2)
 
     bankValue_label = Label(window, text = f"Banka: {values.bankValue}")
