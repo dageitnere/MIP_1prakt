@@ -1,3 +1,5 @@
 from UserInterface.CreateUI import CreateUI
+from tkinter import Tk
 
-CreateUI()
+window=Tk()
+CreateUI(window)

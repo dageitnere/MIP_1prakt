@@ -9,8 +9,11 @@ from UserInterface.MainGameUI import CreateMainGameUI
 firstMovePreferenceChoices = ["Cilvēks", "Dators"]
 algorithmPreferenceChoices = ["MinMax", "AlfaBeta"]
 
-def CreateUI():
-    window=Tk()
+def CreateUI(window):
+    
+    if window.winfo_children():
+        for widget in window.winfo_children():
+            widget.destroy()
 
     # Izveido tekstu un ievades punktu priekš izvēles, kurš uzsāks spēli 
     firstMovePreference_label = Label(window, text = "Kurš uzsāks spēli?")
@@ -56,9 +59,6 @@ def CreateUI():
             computerPoints = 0,
             bankValue = 0
         )
-
-        for widget in window.winfo_children():
-            widget.destroy()
 
         CreateMainGameUI(window, gameState)
         
