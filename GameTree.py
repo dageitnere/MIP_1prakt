@@ -1,6 +1,6 @@
 from CustomModels.RunSettings import RunSettings
 from CustomModels.GameState import GameState
-from HeuristicFunction import minMax, alphaBeta
+from HeuristicFunction import minMax, alphaBeta, calcHeuristicVal
 
 # Izveido koka datu strukturu
 class GameTreeNode:
@@ -93,9 +93,11 @@ def generateGameTree(inputValues : RunSettings, maxDepth: int):
                     node.playerScore += bankScore
                 else:
                     node.computerScore += bankScore
+            calcHeuristicVal(node) #noverte jo tas ir finalmezgls
             return node
 
         if depth == 0:  # Pārbauda vai nav sasniegts maksimālais dziļums, kas iepriekš norādīts
+            calcHeuristicVal(node) #maks dzilums, vel viens novertejums
             return node
 
         isValidMove = False
@@ -116,8 +118,10 @@ def generateGameTree(inputValues : RunSettings, maxDepth: int):
             else:
                 node.computerScore += bankScore
 
-            node.bankScore = 0  # Reset bank score after adding            
-
+            node.bankScore = 0  # Reset bank score after adding
+            calcHeuristicVal(node) #
+        else:
+            calcHeuristicVal(node) #novertet mezglu
         return node
 
     root = buildTree(inputValues.startingValue, maxDepth, inputValues.firstMovePreference, 0, 0, 0, gameTree) # Koka saknes izveide
