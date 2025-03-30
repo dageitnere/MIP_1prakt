@@ -175,7 +175,7 @@ def CreateMainGameUI(window, values: GameState, wasValidMove=True, aiMoveDesc=""
     if wasValidMove == False:
         wasValidMove_label = Label(window, text="Skaitlis nedalās ar šo vērtību!")
         wasValidMove_label.grid(row=6, column=2)
-    # ja ir komentārs par datora gājienu, parādīt to interfeisā
+ 
     if aiMoveDesc:
         aiDesc_label = Label(window, text=aiMoveDesc)
         aiDesc_label.grid(row=7, column=2)
