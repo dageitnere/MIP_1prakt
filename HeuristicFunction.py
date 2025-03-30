@@ -59,12 +59,16 @@ def calcHeuristicVal(node):
     else:
         f2 = 1
 
-    # f3: vertejums vai ir iespejams nakamais solis
-    if node.currentNumber % 2 == 0 or node.currentNumber % 3 == 0:
-        f3 = 0 
+    # f3: vertejums vai ir iespejams nakamais solis un kurš izpildija pedejo soli
+    # ja nedalas uz 3/2 - game over
+    if node.currentNumber % 2 != 0 and node.currentNumber % 3 != 0:
+        if node.turn == 0:  #ja speletaja solis, pirms bija AI
+            f3 = 0 # tas ir labi datoram
+        else:  # ja AI solis un pirms bija speletajs
+            f3 = 2  # slikti
     else:
-        f3 = 1
-
+        f3 = 1  # neviens nepabeiga speli, neitrali
+    
     # heuristika kopējā vērtība (minimizēts)
     heuristic_value = f1 + f2 + f3
     node.setHeuristicValue(heuristic_value)
