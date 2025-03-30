@@ -98,8 +98,10 @@ def generateGameTree(inputValues : RunSettings, maxDepth: int):
         if depth == 0:  # Pārbauda vai nav sasniegts maksimālais dziļums, kas iepriekš norādīts
             return node
 
+        isValidMove = False
         for divisor in (2, 3):
             if currentNumber % divisor == 0:
+                isValidMove = True
                 newNumber = currentNumber // divisor
                 if newNumber > 1:
                     move = firstMovePreferenceChoices[turn]
@@ -107,6 +109,14 @@ def generateGameTree(inputValues : RunSettings, maxDepth: int):
                     childNode = buildTree(newNumber, depth - 1, 1 - turn, *newScores, gameTree)
                     gameTree.addPath(node, childNode)
                     node.children.append(childNode)
+
+        if not isValidMove:
+            if turn == 0:
+                node.playerScore += bankScore
+            else:
+                node.computerScore += bankScore
+
+            node.bankScore = 0  # Reset bank score after adding            
 
         return node
 
