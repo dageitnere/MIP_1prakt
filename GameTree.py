@@ -119,7 +119,7 @@ def generateGameTree(inputValues : RunSettings, maxDepth: int):
                 node.computerScore += bankScore
 
             node.bankScore = 0  # Reset bank score after adding
-            calcHeuristicVal(node) #
+            calcHeuristicVal(node) 
         else:
             calcHeuristicVal(node) #novertet mezglu
         return node

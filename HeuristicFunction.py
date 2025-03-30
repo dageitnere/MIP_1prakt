@@ -60,6 +60,8 @@ def calcHeuristicVal(node):
             f3 = 2 # tas ir labi datoram
         else:  # ja AI solis un pirms bija speletajs
             f3 = 0  # slikti
+    else: 
+        f3 = 1
     
     # heuristika kopējā vērtība (minimizēts)
     heuristic_value = 0.8*f1 + 0.2*f3
