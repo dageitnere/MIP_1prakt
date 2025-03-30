@@ -15,7 +15,11 @@ firstMovePreferenceChoices = ["Cilvēks", "Dators"]
 def get_best_move(values: GameState):
     tree = GameTree()
     root = build_game_tree(values, tree, depth=4)
-    alphaBeta(root)
+    if values.algorithmUsed == 1:
+        alphaBeta(root)
+    elif values.algorithmUsed == 0:
+        minMax(root)
+
     # izvēlas bērnu ar maksimālo heuristikas vērtību (visizdevīgāko datoram)
     bestChild = None
     bestValue = float('-inf')  # sākotnēji mazākā iespējamā vērtība
@@ -87,11 +91,6 @@ def CreateMainGameUI(window, values: GameState, wasValidMove=True, aiMoveDesc=""
 
     # ja spēli vairs nevar turpināt  piešķirt banku pēdējam speletajam un pabeigt spēli
     if values.currentValue % 2 != 0 and values.currentValue % 3 != 0:
-        if values.turnToPlay == "Cilvēks":
-            values.computerPoints += values.bankValue
-        else:
-            values.playerPoints += values.bankValue
-        values.bankValue = 0
         CreateGameFinishUI(window, values)
         return
 
@@ -133,14 +132,15 @@ def CreateMainGameUI(window, values: GameState, wasValidMove=True, aiMoveDesc=""
                 new_value,
                 newPlayerScore,
                 newComputerScore,
-                newBankScore
+                newBankScore,
+                algorithmUsed = values.algorithmUsed
             )
             CreateMainGameUI(window, next_state)
         else:
             CreateMainGameUI(window, values, False)
 
     # funkcija, lai veikt automātisko datora soli
-    def ExecuteAIMove():
+    def ExecuteAIMove(values: GameState):
         best_number = get_best_move(values)
         move = int(values.currentValue // best_number)
 
@@ -157,9 +157,10 @@ def CreateMainGameUI(window, values: GameState, wasValidMove=True, aiMoveDesc=""
             best_number,
             newPlayerScore,
             newComputerScore,
-            newBankScore
+            newBankScore,
+            algorithmUsed = values.algorithmUsed
         )
-        desc = f"Dators izvēlējās dalīt ar {move} (AlphaBeta)"
+        desc = f"Dators izvēlējās dalīt ar {move}"
         CreateMainGameUI(window, next_state, True, desc)
 
     divideByTwo_button = Button(window, text="   2   ", command=lambda: ExecuteMove(2))
@@ -181,6 +182,6 @@ def CreateMainGameUI(window, values: GameState, wasValidMove=True, aiMoveDesc=""
         aiDesc_label.grid(row=7, column=2)
     # ja ir datora solis, automātiski veic gājienu pēc 500 ms(pause)
     if values.turnToPlay == "Dators":
-        window.after(500, ExecuteAIMove)
+        window.after(500, lambda: ExecuteAIMove(values))
 
     mainloop()

@@ -57,9 +57,9 @@ def CreateUI(window):
             currentValue = int(startingValue_entry.get()),
             playerPoints = 0,
             computerPoints = 0,
-            bankValue = 0
+            bankValue = 0,
+            algorithmUsed = runSettings.algorithmPreference
         )
-
         CreateMainGameUI(window, gameState)
         
     # Izvēles apstiprināšanas un spēles uzsākšanas poga
