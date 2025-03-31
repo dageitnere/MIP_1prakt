@@ -13,8 +13,7 @@ firstMovePreferenceChoices = ["Cilvēks", "Dators"]
 # funkcija, kas atgriež labāko nākamo skaitli, ko izvēlas dators, izmantojot AlphaBeta algoritmu
 # atgriež labāko nākamo skaitli, ko izvēlas dators
 def get_best_move(values: GameState):
-    tree = GameTree()
-    root = build_game_tree(values, tree, depth=4)
+    root = generateGameTree(values.currentValue, 4)
     if values.algorithmUsed == 1:
         alphaBeta(root)
     elif values.algorithmUsed == 0:
@@ -40,49 +39,6 @@ def get_best_move(values: GameState):
 
 
 # Uzģenerēt spēles koku 
-def build_game_tree(values: GameState, gameTree, depth=4):
-    seenStates = {}
-
-    def buildTree(currentNumber, depth, turn, playerScore, computerScore, bankScore, gameTree):
-        state_key = (currentNumber, playerScore, computerScore, bankScore, turn)
-        if state_key in seenStates:
-            return seenStates[state_key]
-
-        node = GameTreeNode(currentNumber, playerScore, computerScore, bankScore, turn)
-        gameTree.addNode(node)
-        seenStates[state_key] = node
-
-        # ja iegūts 2 vai 3, tiek piešķirta banka
-        if currentNumber in [2, 3]:
-            if currentNumber == 2:
-                if turn == 0:
-                    node.playerScore += bankScore
-                else:
-                    node.computerScore += bankScore
-            return node
-
-        # ja sasniegts maksimālais dziļums
-        if depth == 0:
-            return node
-
-        # ģenerē bērnus (nākamos stāvokļus) pēc dalīšanas
-        for divisor in (2, 3):
-            if currentNumber % divisor == 0:
-                newNumber = currentNumber // divisor
-                if newNumber > 1:
-                    if turn == 0:
-                        newPlayer = playerScore + (1 if newNumber % 2 == 0 else -1)
-                        newComputer = computerScore
-                    else:
-                        newComputer = computerScore + (1 if newNumber % 2 == 0 else -1)
-                        newPlayer = playerScore
-                    newBank = bankScore + (1 if newNumber % 10 == 0 or newNumber % 5 == 0 else 0)
-                    child = buildTree(newNumber, depth - 1, 1 - turn, newPlayer, newComputer, newBank, gameTree)
-                    node.children.append(child)
-
-        return node
-
-    return buildTree(int(values.currentValue), depth, 1, values.playerPoints, values.computerPoints, values.bankValue, gameTree)
 
 
 def CreateMainGameUI(window, values: GameState, wasValidMove=True, aiMoveDesc=""):
@@ -91,7 +47,23 @@ def CreateMainGameUI(window, values: GameState, wasValidMove=True, aiMoveDesc=""
 
     # ja spēli vairs nevar turpināt  piešķirt banku pēdējam speletajam un pabeigt spēli
     if values.currentValue % 2 != 0 and values.currentValue % 3 != 0:
-        CreateGameFinishUI(window, values)
+        message = ""
+        if values.bankValue > 0:
+            if values.turnToPlay == "Cilvēks":
+                values.playerPoints += values.bankValue
+                message = f"Banka ({values.bankValue}) pievienota spēlētājam"
+            else:
+                values.computerPoints += values.bankValue
+                message = f"Banka ({values.bankValue}) pievienota datoram"
+            values.bankValue = 0
+        else:
+            message = "Gājiens nav iespējams – spēle beigusies"
+
+        # Parādīt ziņojumu pirms spēles beigām
+        info_label = Label(window, text=message)
+        info_label.grid(row=0, column=1, columnspan=3)
+
+        window.after(1500, lambda: CreateGameFinishUI(window, values))
         return
 
     # ekrāna komponentes
