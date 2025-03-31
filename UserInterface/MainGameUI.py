@@ -6,6 +6,7 @@ from UserInterface.GameFinishUI import CreateGameFinishUI
 from ExternalMethods import GetIndexFromList
 from HeuristicFunction import minMax, alphaBeta
 from GameTree import GameTreeNode, GameTree
+from CustomModels.RunSettings import RunSettings
 
 # Izvēles secība: kurš veic gājienu - spēlētājs vai dators
 firstMovePreferenceChoices = ["Cilvēks", "Dators"]
@@ -13,7 +14,19 @@ firstMovePreferenceChoices = ["Cilvēks", "Dators"]
 # funkcija, kas atgriež labāko nākamo skaitli, ko izvēlas dators, izmantojot AlphaBeta algoritmu
 # atgriež labāko nākamo skaitli, ko izvēlas dators
 def get_best_move(values: GameState):
-    root = generateGameTree(values.currentValue, 4)
+    # nosaka, kuru algoritmu izmantot, balstoties uz speles stavokli:
+    # 1 - AlphaBeta, 0 - Minimax
+    if values.algorithmUsed == 1:
+        algorithm = "AlphaBeta"
+    else:
+        algorithm = "Minimax"
+
+    inputValues = RunSettings(
+    firstMovePreference=1,                 # 1 = Dators
+    algorithmPreference=algorithm,        # izvēlētais algoritms
+    startingValue=int(values.currentValue))  # pašreizējā vērtība
+    
+    _, root = generateGameTree(inputValues, 4)
     if values.algorithmUsed == 1:
         alphaBeta(root)
     elif values.algorithmUsed == 0:
