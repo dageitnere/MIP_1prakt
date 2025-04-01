@@ -57,12 +57,12 @@ def calcHeuristicVal(node):
     # ja nedalas uz 3/2 - game over
     if node.currentNumber % 2 != 0 and node.currentNumber % 3 != 0:
         if node.turn == 0:  #ja speletaja solis, pirms bija AI
-            f3 = 2 # tas ir labi datoram
+            f2 = 2 # tas ir labi datoram
         else:  # ja AI solis un pirms bija speletajs
-            f3 = 0  # slikti
+            f2 = 0  # slikti
     else: 
-        f3 = 1
+        f2 = 1
     
     # heuristika kopējā vērtība (minimizēts)
-    heuristic_value = 0.8*f1 + 0.2*f3
+    heuristic_value = 0.8*f1 + 0.2*f2
     node.setHeuristicValue(heuristic_value)
