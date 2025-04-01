@@ -1,9 +1,7 @@
 import random
 
+# Izveido sarakstu ar 5 iespējamajiem spēles uzsākšanas skaitļiem
 def GenerateStartingNumberList():
-    """
-    Generates a list containing 5 random integers, which are between 10000 and 20000.
-    """
     startingNumberList = []
 
     while len(startingNumberList) < 5:
@@ -13,5 +11,6 @@ def GenerateStartingNumberList():
 
     return startingNumberList
 
+# Izgūst indeksu no saraksta, nepieciešams GameTree datu struktūrā
 def GetIndexFromList(value : str, valueList : list):
     return valueList.index(value)
