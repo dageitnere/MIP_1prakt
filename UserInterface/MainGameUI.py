@@ -26,7 +26,7 @@ def get_best_move(values: GameState):
     algorithmPreference=algorithm,        # izvēlētais algoritms
     startingValue=int(values.currentValue))  # pašreizējā vērtība
     
-    _, root = generateGameTree(inputValues, 4)
+    _, root = generateGameTree(inputValues, 3)
     if values.algorithmUsed == 1:
         alphaBeta(root)
     elif values.algorithmUsed == 0:

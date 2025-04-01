@@ -25,7 +25,7 @@ def CreateUI(window):
     firstMovePreference_entry.grid(row = 1, column = 2)
 
     # Izveido tekstu un ievades punktu priekš izvēles, kuru algoritmu izmantos dators
-    algorithmPreference_label = Label(window, text = "Kuru algoritmu izmantos dators? Ievadīt 1 (MinMax) vai 2 (AlfaBeta)")
+    algorithmPreference_label = Label(window, text = "Kuru algoritmu izmantos dators?")
     algorithmPreference_label.grid(row = 2, column = 1)
     algorithmPreference_entry = ttk.Combobox(
         state = "readonly",
