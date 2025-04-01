@@ -20,7 +20,7 @@ def averageRuntime(algorithm, depth, numbers, trials=10):
     
     return sum(times) / len(times)
 
-depths = [3, 4, 5, 10]  # Example depths to test
+depths = [3, 4, 5, 10]
 trials = 10
 
 print("Izmantojot desmit dazadus ciparus, datora videjais lemuma pienemsanas laiks atkariba no dziluma:")
