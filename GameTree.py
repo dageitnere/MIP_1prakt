@@ -87,14 +87,6 @@ def generateGameTree(inputValues : RunSettings, maxDepth: int):
         gameTree.addNode(node) # Pievieno virsotni kokam
         seenStates[state_key] = node
 
-        if currentNumber in [2, 3]:  # Pārbauda vai nav sasniegts 2 vai 3, kad izmaksā banku
-            if currentNumber == 2:
-                if turn == 0:
-                    node.playerScore += bankScore
-                else:
-                    node.computerScore += bankScore
-            return node
-
         if depth == 0:  # Pārbauda vai nav sasniegts maksimālais dziļums, kas iepriekš norādīts
             return node
 
